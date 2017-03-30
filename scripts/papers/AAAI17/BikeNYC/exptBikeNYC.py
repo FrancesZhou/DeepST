@@ -9,6 +9,9 @@ import cPickle as pickle
 import numpy as np
 import math
 
+import sys
+sys.path.append('/home/zx/DeepST/')
+
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from deepst.models.STResNet import stresnet
