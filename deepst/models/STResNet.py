@@ -87,25 +87,7 @@ def stresnet(c_conf=(3, 2, 32, 32), p_conf=(3, 2, 32, 32), t_conf=(3, 2, 32, 32)
         new_outputs = []
         for output in outputs:
             # for tensorflow 
-            # [row, col, channel] -> [channel, row, col]
-            #output = K.transpose(output, [2,0,1])
-            o_shape = output.get_shape().as_list()
-            #new_o_shape = [o_shape[2], o_shape[0], o_shape[1]]
-            output_trans = np.zeros(shape=(o_shape[2], o_shape[0], o_shape[1]))
-            output = output.eval()
-            for chan in range(o_shape[-1]):
-                output_trans[chan,:,:] = output[:, :, chan]
-            output_trans = K.convert_to_tensor(output_trans)
-            # fusion
-            new_output = iLayer()(output_trans)
-            # transfer from [channel, row, col] -> [row, col, channel]
-            new_output_trans = np.zeros(tuple(o_shape))
-            new_output = new_output.eval()
-            for chan in range(o_shape[-1]):
-                new_output_trans[:,:,chan] = new_output[chan, :, :]
-            new_output_trans = K.convert_to_tensor(new_output_trans)
-            new_outputs.append(new_output_trans)
-            #new_outputs.append(K.transpose(iLayer()(output), [1,2,0]))
+            new_outputs.append(iLayer()(output))
         main_output = merge(new_outputs, mode='sum')
 
     # fusing with external component
