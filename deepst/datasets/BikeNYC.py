@@ -47,7 +47,7 @@ def load_data(T=24, nb_flow=2, len_closeness=None, len_period=None, len_trend=No
     for data, timestamps in zip(data_all_mmn, timestamps_all):
         # instance-based dataset --> sequences with format as (X, Y) where X is a sequence of images and Y is an image.
         st = STMatrix(data, timestamps, T, CheckComplete=False)
-        _XC, _XP, _XT, _Y, _timestamps_Y = st.create_dataset(len_closeness=len_closeness, len_period=len_period, len_trend=len_trend)
+        _XC, _XP, _XT, _Y, _timestamps_Y, _ = st.create_dataset(len_closeness=len_closeness, len_period=len_period, len_trend=len_trend)
         XC.append(_XC)
         XP.append(_XP)
         XT.append(_XT)
@@ -67,9 +67,13 @@ def load_data(T=24, nb_flow=2, len_closeness=None, len_period=None, len_trend=No
     X_test = []
     for l, X_ in zip([len_closeness, len_period, len_trend], [XC_train, XP_train, XT_train]):
         if l > 0:
+            # for tensorflow backend
+            X_ = np.transpose(X_, [0, 2, 3, 1])
             X_train.append(X_)
     for l, X_ in zip([len_closeness, len_period, len_trend], [XC_test, XP_test, XT_test]):
         if l > 0:
+            # for tensorflow backend
+            X_ = np.transpose(X_, [0, 2, 3, 1])
             X_test.append(X_)
     print('train shape:', XC_train.shape, Y_train.shape, 'test shape: ', XC_test.shape, Y_test.shape)
     # load meta feature
@@ -87,4 +91,7 @@ def load_data(T=24, nb_flow=2, len_closeness=None, len_period=None, len_trend=No
     for _X in X_test:
         print(_X.shape, )
     print()
+    # for tensorflow backend
+    Y_train = np.transpose(Y_train, [0, 2, 3, 1])
+    Y_test = np.transpose(Y_test, [0, 2, 3, 1])
     return X_train, Y_train, X_test, Y_test, mmn, metadata_dim, timestamp_train, timestamp_test

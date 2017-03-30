@@ -10,6 +10,7 @@ from keras.layers import (
     Dense,
     Reshape
 )
+from keras import backend as K
 from keras.layers.convolutional import Convolution2D
 from keras.layers.normalization import BatchNormalization
 from keras.models import Model
@@ -62,7 +63,8 @@ def stresnet(c_conf=(3, 2, 32, 32), p_conf=(3, 2, 32, 32), t_conf=(3, 2, 32, 32)
     for conf in [c_conf, p_conf, t_conf]:
         if conf is not None:
             len_seq, nb_flow, map_height, map_width = conf
-            input = Input(shape=(nb_flow * len_seq, map_height, map_width))
+            #input = Input(shape=(nb_flow * len_seq, map_height, map_width))
+            input = Input(shape=(map_height, map_width, nb_flow * len_seq))
             main_inputs.append(input)
             # Conv1
             conv1 = Convolution2D(
@@ -83,7 +85,10 @@ def stresnet(c_conf=(3, 2, 32, 32), p_conf=(3, 2, 32, 32), t_conf=(3, 2, 32, 32)
         from .iLayer import iLayer
         new_outputs = []
         for output in outputs:
-            new_outputs.append(iLayer()(output))
+            # for tensorflow [row, col, channel]
+            output = K.transpose(output, [2,0,1])
+            #new_outputs.append(iLayer()(output))
+            new_outputs.append(K.transpose(iLayer()(output), [1,2,0]))
         main_output = merge(new_outputs, mode='sum')
 
     # fusing with external component
@@ -95,12 +100,14 @@ def stresnet(c_conf=(3, 2, 32, 32), p_conf=(3, 2, 32, 32), t_conf=(3, 2, 32, 32)
         embedding = Activation('relu')(embedding)
         h1 = Dense(output_dim=nb_flow * map_height * map_width)(embedding)
         activation = Activation('relu')(h1)
-        external_output = Reshape((nb_flow, map_height, map_width))(activation)
+        #external_output = Reshape((nb_flow, map_height, map_width))(activation)
+        external_output = Reshape((map_height, map_width, nb_flow))(activation)
         main_output = merge([main_output, external_output], mode='sum')
     else:
         print('external_dim:', external_dim)
 
-    main_output = Activation('tanh')(main_output)
+    #main_output = Activation('tanh')(main_output)
+    main_output = Activation('relu')(main_output)
     model = Model(input=main_inputs, output=main_output)
 
     return model
