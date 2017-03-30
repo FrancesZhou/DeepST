@@ -90,8 +90,8 @@ def stresnet(c_conf=(3, 2, 32, 32), p_conf=(3, 2, 32, 32), t_conf=(3, 2, 32, 32)
             # [row, col, channel] -> [channel, row, col]
             #output = K.transpose(output, [2,0,1])
             o_shape = output.get_shape().as_list()
-            new_o_shape = [o_shape[2], o_shape[0], o_shape[1]]
-            output_trans = np.ndarray(tuple(new_o_shape))
+            #new_o_shape = [o_shape[2], o_shape[0], o_shape[1]]
+            output_trans = np.zeros((o_shape[2], o_shape[0], o_shape[1]))
             output = output.eval()
             for chan in range(o_shape[-1]):
                 output_trans[chan,:,:] = output[:, :, chan]
@@ -99,7 +99,7 @@ def stresnet(c_conf=(3, 2, 32, 32), p_conf=(3, 2, 32, 32), t_conf=(3, 2, 32, 32)
             # fusion
             new_output = iLayer()(output_trans)
             # transfer from [channel, row, col] -> [row, col, channel]
-            new_output_trans = np.ndarray(tuple(o_shape))
+            new_output_trans = np.zeros(tuple(o_shape))
             new_output = new_output.eval()
             for chan in range(o_shape[-1]):
                 new_output_trans[:,:,chan] = new_output[chan, :, :]
