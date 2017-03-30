@@ -77,11 +77,11 @@ def build_model(external_dim):
 def main():
     # load data
     print("loading data...")
-    X_train, Y_train, X_test, Y_test, mmn, external_dim, timestamp_train, timestamp_test = BikeNYC.load_data(
-        T=T, nb_flow=nb_flow, len_closeness=len_closeness, len_period=len_period, len_trend=len_trend, len_test=len_test,
-        preprocess_name='preprocessing.pkl', meta_data=True)
+    #X_train, Y_train, X_test, Y_test, mmn, external_dim, timestamp_train, timestamp_test = BikeNYC.load_data(
+    #    T=T, nb_flow=nb_flow, len_closeness=len_closeness, len_period=len_period, len_trend=len_trend, len_test=len_test,
+    #    preprocess_name='preprocessing.pkl', meta_data=True)
 
-    print("\n days (test): ", [v[:8] for v in timestamp_test[0::T]])
+    #print("\n days (test): ", [v[:8] for v in timestamp_test[0::T]])
 
     print('=' * 10)
     print("compiling model...")
