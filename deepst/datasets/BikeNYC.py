@@ -72,15 +72,16 @@ def load_data(T=24, nb_flow=2, len_closeness=None, len_period=None, len_trend=No
             #X_ = np.transpose(X_, [0, 2, 3, 1])
             # X_: [num, channel, row, col] -> [num, row, col, channel] 
             X_trans = np.ndarray([X_.shape[0], X_.shape[2], X_.shape[3], X_.shape[1]])
-            for chan in range(X_.shape[-1]):
+            for chan in range(X_.shape[1]):
                 X_trans[:,:,:,chan] = X_[:,chan,:,:]
             X_train.append(X_trans)
     for l, X_ in zip([len_closeness, len_period, len_trend], [XC_test, XP_test, XT_test]):
         if l > 0:
             # for tensorflow backend
+            # X_: [num, channel, row, col] -> [num, row, col, channel]
             #X_ = np.transpose(X_, [0, 2, 3, 1])
             X_trans = np.ndarray([X_.shape[0], X_.shape[2], X_.shape[3], X_.shape[1]])
-            for chan in range(X_.shape[-1]):
+            for chan in range(X_.shape[1]):
                 X_trans[:,:,:,chan] = X_[:,chan,:,:]
             X_test.append(X_trans)
     print('train shape:', XC_train.shape, Y_train.shape, 'test shape: ', XC_test.shape, Y_test.shape)
@@ -100,12 +101,13 @@ def load_data(T=24, nb_flow=2, len_closeness=None, len_period=None, len_trend=No
         print(_X.shape, )
     print()
     # for tensorflow backend
+    # [num, channel, row, col] -> [num, row, col, channel]
     #Y_train = np.transpose(Y_train, [0, 2, 3, 1])
     Y_train_trans = np.ndarray([Y_train.shape[0], Y_train.shape[2], Y_train.shape[3], Y_train.shape[1]])
-    for chan in range(Y_train.shape[-1]):
+    for chan in range(Y_train.shape[1]):
         Y_train_trans[:,:,:,chan] = Y_train[:,chan,:,:]
     #Y_test = np.transpose(Y_test, [0, 2, 3, 1])
     Y_test_trans = np.ndarray([Y_test.shape[0], Y_test.shape[2], Y_test.shape[3], Y_test.shape[1]])
-    for chan in range(Y_test.shape[-1]):
+    for chan in range(Y_test.shape[1]):
         Y_test_trans[:,:,:,chan] = Y_test[:,chan,:,:]
     return X_train, Y_train_trans, X_test, Y_test_trans, mmn, metadata_dim, timestamp_train, timestamp_test
