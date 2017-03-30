@@ -47,7 +47,7 @@ def load_data(T=24, nb_flow=2, len_closeness=None, len_period=None, len_trend=No
     for data, timestamps in zip(data_all_mmn, timestamps_all):
         # instance-based dataset --> sequences with format as (X, Y) where X is a sequence of images and Y is an image.
         st = STMatrix(data, timestamps, T, CheckComplete=False)
-        _XC, _XP, _XT, _Y, _timestamps_Y, _ = st.create_dataset(len_closeness=len_closeness, len_period=len_period, len_trend=len_trend)
+        _XC, _XP, _XT, _Y, _timestamps_Y = st.create_dataset(len_closeness=len_closeness, len_period=len_period, len_trend=len_trend)
         XC.append(_XC)
         XP.append(_XP)
         XT.append(_XT)
